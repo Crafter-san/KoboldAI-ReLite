@@ -2,8 +2,42 @@
 <html lang="en">
 	<head>
 	
+		<script src="./prompts.js"></script>
+		<script src="./scenarios.js"></script>
+		<script src="./index.js"></script>
 	</head>
 	<body>
+		<div id="messages"></div>
+		<div id="message_box">
+			<textarea id="message"></textarea><button onclick="send()" id="send_message">Send</button>
+		</div>
+		<div id="options">
+			
+			Interaction <select id="interaction" onchange="update();">
+				<option value=null></option>
+			</select>
+			<input id="interaction_name"></input>
+			<button onclick="del()">Delete</button>
+			<button onclick="create()">Create</button><br>
+			Full Character List <select id="master">
+				<option value=null></option>
+				
+			</select>
+			<button onclick="add()">Add</button><button onclick="remove()">Remove</button><br>
+			User Character <select id="user">
+				<option value=null></option>
+				
+			</select><br>
+			AI Character <select id="puter">
+				<option value=null></option>
+				
+			</select>
+			<button onclick="send">Gen AI Response</button>
+			<br>
+			Scenario <select id="scenario" onchange="update_scenario()">
+				<option value=null></option>
+			</select>
+		</div>
 	
 	
 	</body>
