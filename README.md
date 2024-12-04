@@ -1,2 +1,2 @@
 # KoboldAI-ReLite
-Rewrite of KoboldAI Lite
+Inspired by KoboldAI Lite
