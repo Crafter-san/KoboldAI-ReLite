@@ -2,7 +2,8 @@
 let replying = false;
 const current_interaction = {};
 let INTERACTIONS = [];
-async function gen (prompt, memories, character) {
+async function gen () {
+	if (!current_interaction.id) return;
 	const api_body = {
 	  "max_context_length": 8000,
 	  "max_length": 300,
@@ -18,14 +19,38 @@ async function gen (prompt, memories, character) {
 	  "top_p": 0.9,
 	  "typical": 1
 	};
-	for (const user of prompt.current_users) {
-		api_body.prompt += `\n\n<|eot_id|><|start_header_id|>${prompt.user_characters[user]}<|end_header_id|>${prompt.user_characters[user]}: ${PROMPTS[prompt.user_characters[user]]}`;
+	for (const user of current_interaction.characters) {
+		api_body.prompt += `\n\n<|eot_id|><|start_header_id|>${user}<|end_header_id|>${user}: ${PROMPTS[user]}`;
 	}
-	api_body.prompt += "\n\n---------Interaction Start---------\n\n" + memories.memories + `\n\n<|eot_id|><|start_header_id|>${character}<|end_header_id|>${character}: `;
+	api_body.prompt += `<|eot_id|><|start_header_id|>Scenario<|end_header_id|>Scenario: ${SCENARIOS[current_interaction.scenario]}`;
+	api_body.prompt += "\n\n---------Interaction Start---------\n\n";
+	for (const memory of current_interaction.memories) {
+		if (!memory.deleted) 	api_body.prompt += `\n\n<|eot_id|><|start_header_id|>${memory.user}<|end_header_id|>${memory.user}: ${memory.text}`;
+	}
+	const character = document.getElementById("puter");
+	if (!character) return;
+	api_body.prompt += `\n\n<|eot_id|><|start_header_id|>${character.value}<|end_header_id|>${character.value}: `;
 	
-	let response = await axios.post(prompt.url + "api/v1/generate", api_body);
+	let response = await fetch(SETTINGS.url + "/api/v1/generate", {
+		method: "POST",
+	  body: JSON.stringify(api_body),
+	});
+	console.log(response);
 
-	return response.data.results[0].text || await gen(prompt);
+	//let response = await axios.post(, api_body);
+	response = await response.json();
+	console.log(response);
+	if (!response.results[0].text) return await gen();
+	response = response.results[0].text;
+	//return ;
+	const message = {};
+	message.user = document.getElementById("puter").value;
+	message.id = current_interaction.memories.length;
+	message.text = response;
+	message.deleted = false;
+	current_interaction.memories.push(message);
+	appendMessage(message, document.getElementById("messages"));
+	localStorage.setItem(`memories-${current_interaction.id}`, JSON.stringify(current_interaction.memories));
 }
 function trim(str = "", maxlen = 2000, extraEnders = []) {
 	let enders = ['.', '!', '?', '*', '"', ')', '}', '`', ']', ';', '…', ...extraEnders];
@@ -86,28 +111,15 @@ function init () {
 	
 	document.getElementById("scenario").replaceWith(scenario_selection);
 }
-function update() {
-	const message_box = document.createElement("div");
-	message_box.id = "messages";
-	document.getElementById("messages").replaceWith(message_box);
-	console.log("before", document.getElementById("interaction").value);
-	if (!document.getElementById("interaction").value) return;
-	console.log("after");
-	current_interaction.id = document.getElementById("interaction").value;
-	current_interaction.messages = localStorage.getItem(`memories-${current_interaction.id}`);
-	current_interaction.messages = JSON.parse(current_interaction.messages);
-	current_interaction.characters = localStorage.getItem(`characters-${current_interaction.id}`);
-	current_interaction.characters = JSON.parse(current_interaction.characters);
-	for (const character of current_interaction.characters) {
-		
-	}
-	for (const message of current_interaction.messages) {
+function appendMessage (message, message_box) {
+	
 		const message_display = document.createElement("div");
 		message_display.id = "message-" + message.id;
 		const del = document.createElement("button");
 		del.onclick = function () {
 			document.getElementById("message-" + message.id).remove();
-			current_interaction.messages[message.id].deleted = true;
+			current_interaction.memories[message.id].deleted = true;
+			localStorage.setItem(`memories-${current_interaction.id}`, JSON.stringify(current_interaction.memories));
 		}
 		del.innerText = "x";
 		
@@ -120,12 +132,47 @@ function update() {
 		const save = document.createElement("button");
 		save.innerText = "Save Edit";
 		save.onclick = function () {
-			current_interaction.messages[message.id] = document.getElementById("message").value;
+			console.log(message.id, document.getElementById("message").value, message.user);
+			current_interaction.memories[message.id].text = document.getElementById("message").value;
+			document.getElementById("message_text-"+message.id).innerText = document.getElementById("message").value;
+			localStorage.setItem(`memories-${current_interaction.id}`, JSON.stringify(current_interaction.memories));
 		}
+		const username = document.createElement("h3");
+		username.innerText = `[${message.user}] `	;
 		const message_text = document.createElement("p");
+		message_text.id = "message_text-"+message.id;
 		message_text.innerText = message.text;
-		message_display.append(message_text, del, edit, save);
+		message_display.append(username, message_text, del, edit, save);
 		if (!message.deleted) message_box.append(message_display);
+}
+function update() {
+	const message_box = document.createElement("div");
+	message_box.id = "messages";
+	document.getElementById("messages").replaceWith(message_box);
+	console.log("before", document.getElementById("interaction").value);
+	if (!document.getElementById("interaction").value) return;
+	console.log("after");
+	current_interaction.id = document.getElementById("interaction").value;
+	current_interaction.memories = localStorage.getItem(`memories-${current_interaction.id}`);
+	current_interaction.memories = JSON.parse(current_interaction.memories);
+	current_interaction.characters = localStorage.getItem(`characters-${current_interaction.id}`);
+	current_interaction.characters = JSON.parse(current_interaction.characters);
+	user_character = document.createElement("select");
+	ai_character =  document.createElement("select");
+	ai_character.id = "puter";
+	user_character.id = "user";
+	for (const character of current_interaction.characters) {
+		const selection = document.createElement("option");
+		selection.value = character;
+		selection.innerText = character;
+		selection.title = PROMPTS[character];
+		user_character.append(selection.cloneNode(true));
+		ai_character.append(selection.cloneNode(true));
+	}
+	document.getElementById("user").replaceWith(user_character);
+	document.getElementById("puter").replaceWith(ai_character);
+	for (const message of current_interaction.memories) {
+		appendMessage(message, message_box);
 	}
 }
 function create () {
@@ -136,6 +183,7 @@ function create () {
 	localStorage.setItem(`scenario-${interaction}`, "none");
 	INTERACTIONS.push(interaction);
 	localStorage.setItem("interactions", JSON.stringify(INTERACTIONS)); 
+	init();
 	update();
 }
 function del () {
@@ -149,15 +197,17 @@ function del () {
 		return !!element;
 	});
 	localStorage.setItem("interactions", JSON.stringify(INTERACTIONS));
+	init();
 	update();
 }
 function add () {
+	console.log("adding");
 	const interaction = document.getElementById("interaction").value;
 	if (!INTERACTIONS.includes(interaction) || !interaction) return;
 	const character = document.getElementById("master").value;
 	if (!character || current_interaction.characters.includes(character)) return;
 	
-	current_interaction.characters.push[character];
+	current_interaction.characters.push(character);
 	localStorage.setItem(`characters-${interaction}`, JSON.stringify(current_interaction.characters));
 	update();
 }
@@ -172,6 +222,7 @@ function remove () {
 		return !!element;
 	});
 	localStorage.setItem(`characters-${interaction}`, JSON.stringify(current_interaction.characters));
+	update();
 }
 
 function update_scenario() {
@@ -184,7 +235,24 @@ function update_scenario() {
 	current_interaction.scenario = scenario;
 }
 function send () {
-		/*document.getElementById("send_message").disabled = true;
+	if (!current_interaction.id) return;
+	const message = {};
+	message.user = document.getElementById("user").value;
+	message.id = current_interaction.memories.length;
+	message.text = document.getElementById("message").value;
+	message.deleted = false;
+	current_interaction.memories.push(message);
+	localStorage.setItem(`memories-${current_interaction.id}`, JSON.stringify(current_interaction.memories));
+	
+	
+		//const username = document.createElement("h3");
+		//username.innerText = `[${message.user}] `	;
+		//const message_text = document.createElement("p");
+		//message_text.innerText = message.text;
+		//message_display.append(username, message_text, del, edit, save);
+		appendMessage(message, document.getElementById("messages"));
+	/*document.getElementById("send_message").disabled = true;
+	
 		for (const message of messages) {
 			
 		}
