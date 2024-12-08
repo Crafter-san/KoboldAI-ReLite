@@ -8,16 +8,27 @@
 		<script src="./index.js"></script>
 	</head>
 	<body>
-		<div id="messages"></div>
+		<div id="messages" hidden>
+			<select id="interaction" onchange="update();">
+				<option value=null>Interaction</option>
+			</select></div>
 		<div id="message_box">
-			<textarea id="message"></textarea><button onclick="send()" id="send_message">Send</button>
+			<textarea id="message"></textarea>
+			<select id="user">
+				<option value=null>User Character</option>
+				
+			</select><br>
+			<input type="checkbox" id="respond">Gen AI Response</input>
+			<select id="puter">
+				<option value=null>AI Character</option>
+				
+			</select>
+			<button onclick="send()" id="send_message">Send</button>
 		</div>
 		
 		<div id="options">
 			
-			Interaction <select id="interaction" onchange="update();">
-				<option value=null></option>
-			</select>
+			
 			<input id="interaction_name"></input>
 			<button onclick="del()">Delete</button>
 			<button onclick="create()">Create</button><br>
@@ -26,20 +37,25 @@
 				
 			</select>
 			<button onclick="add()">Add</button><button onclick="remove()">Remove</button><br>
-			User Character <select id="user">
-				<option value=null></option>
-				
-			</select><br>
-			AI Character <select id="puter">
-				<option value=null></option>
-				
-			</select>
-			<button onclick="gen()">Gen AI Response</button>
+			
 			<br>
 			Scenario <select id="scenario" onchange="update_scenario()">
 				<option value=null></option>
 			</select>
 		</div>
+		<div id="interactions_tab" hidden>
+		
+		</div>
+		<div id="settings_tab" hidden></div>
+		<div id="characters_tab" hidden></div>
+		<div id="scenarios_tab" hidden></div>
+		<div id="other_tabs">
+			<button onclick="toggleTab('messages')">Messages</button><br>
+			<button onclick="toggleTab('interactions_tab')">Interactions</button><br>
+			<button onclick="toggleTab('settings_tab')">Settings</button><br>
+			<button onclick="toggleTab('characters_tab')">Characters</button><br>
+			<button onclick="toggleTab('scenarios_tab')">Scenarios</button><br>
+		<div>
 	
 	
 	</body>

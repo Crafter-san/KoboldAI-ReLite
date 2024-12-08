@@ -234,23 +234,34 @@ function update_scenario() {
 	localStorage.setItem(`scenario-${interaction}`, scenario);
 	current_interaction.scenario = scenario;
 }
+const TABS = ["settings_tab", "characters_tab", "scenarios_tab", "interactions_tab", "messages"];
+function toggleTab (tabname) {
+	for (const tab of TABS) {
+		console.log(tabname === tab, document.getElementById(tabname).hidden);
+		if (tab !== tabname) document.getElementById(tab).hidden = true;
+	}
+	document.getElementById(tabname).hidden = !(document.getElementById(tabname).hidden || false);
+}
 function send () {
 	if (!current_interaction.id) return;
 	const message = {};
 	message.user = document.getElementById("user").value;
 	message.id = current_interaction.memories.length;
 	message.text = document.getElementById("message").value;
-	message.deleted = false;
-	current_interaction.memories.push(message);
-	localStorage.setItem(`memories-${current_interaction.id}`, JSON.stringify(current_interaction.memories));
-	
-	
-		//const username = document.createElement("h3");
-		//username.innerText = `[${message.user}] `	;
-		//const message_text = document.createElement("p");
-		//message_text.innerText = message.text;
-		//message_display.append(username, message_text, del, edit, save);
-		appendMessage(message, document.getElementById("messages"));
+	if (message.text.length > 1) {
+		message.deleted = false;
+		current_interaction.memories.push(message);
+		localStorage.setItem(`memories-${current_interaction.id}`, JSON.stringify(current_interaction.memories));
+		
+		
+			//const username = document.createElement("h3");
+			//username.innerText = `[${message.user}] `	;
+			//const message_text = document.createElement("p");
+			//message_text.innerText = message.text;
+			//message_display.append(username, message_text, del, edit, save);
+			appendMessage(message, document.getElementById("messages"));
+	}
+	if (document.getElementById("respond").checked) gen();
 	/*document.getElementById("send_message").disabled = true;
 	
 		for (const message of messages) {
