@@ -68,7 +68,9 @@ function init () {
 	INTERACTIONS = JSON.parse(localStorage.getItem("interactions") || "[]");
 	const full_characters = document.createElement("select");
 	full_characters.id = "master";
-	full_characters.append(dummy_option.cloneNode(true));
+	const blank_character = dummy_option.cloneNode(true);
+	blank_character.innerText = "Full Character List";
+	full_characters.append(blank_character);
 	for (const [character, desc] of Object.entries(PROMPTS)) {
 		const character_option = document.createElement("option");
 		character_option.value = character;
@@ -85,7 +87,9 @@ function init () {
 		console.log("test");
 		update();
 	}
-	interaction_selection.append(dummy_option.cloneNode(true));
+	const blank_interaction = dummy_option.cloneNode(true);
+	blank_interaction.innerText = "Interaction";
+	interaction_selection.append(blank_interaction);
 	for (const interaction of INTERACTIONS) {
 		const select = document.createElement("option");
 		select.value = interaction;
@@ -161,6 +165,15 @@ function update() {
 	ai_character =  document.createElement("select");
 	ai_character.id = "puter";
 	user_character.id = "user";
+	
+	const blank_user = dummy_option.cloneNode(true);
+	
+	const blank_puter = dummy_option.cloneNode(true);
+	blank_user.innerText = "User Character";
+	blank_puter.innerText = "AI Character";
+	
+	user_character.append(blank_user);
+	ai_character.append(blank_puter);
 	for (const character of current_interaction.characters) {
 		const selection = document.createElement("option");
 		selection.value = character;
@@ -241,6 +254,9 @@ function toggleTab (tabname) {
 		if (tab !== tabname) document.getElementById(tab).hidden = true;
 	}
 	document.getElementById(tabname).hidden = !(document.getElementById(tabname).hidden || false);
+}
+function toggleTabs () {
+	document.getElementById("other_tabs").hidden = !document.getElementById("other_tabs").hidden;
 }
 function send () {
 	if (!current_interaction.id) return;

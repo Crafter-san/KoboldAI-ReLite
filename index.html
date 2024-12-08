@@ -8,21 +8,26 @@
 		<script src="./index.js"></script>
 	</head>
 	<body>
-		<div id="messages" hidden>
+		<div class="sticky">
+			<button onclick="toggleTabs()">Tabs</button><br>
 			<select id="interaction" onchange="update();">
 				<option value=null>Interaction</option>
-			</select></div>
-		<div id="message_box">
+			</select>
+		</div>
+		<div id="messages" hidden>
+			</div>
+		<div id="message_box" class="sticky">
 			<textarea id="message"></textarea>
 			<select id="user">
 				<option value=null>User Character</option>
 				
 			</select><br>
-			<input type="checkbox" id="respond">Gen AI Response</input>
+			<input type="checkbox" id="respond">AI Autoresponse</input>
 			<select id="puter">
 				<option value=null>AI Character</option>
 				
 			</select>
+			<button onclick="gen()">Gen AI Response</button>
 			<button onclick="send()" id="send_message">Send</button>
 		</div>
 		
@@ -32,15 +37,15 @@
 			<input id="interaction_name"></input>
 			<button onclick="del()">Delete</button>
 			<button onclick="create()">Create</button><br>
-			Full Character List <select id="master">
-				<option value=null></option>
+			<select id="master">
+				<option value=null>Full Character List</option>
 				
 			</select>
 			<button onclick="add()">Add</button><button onclick="remove()">Remove</button><br>
 			
 			<br>
-			Scenario <select id="scenario" onchange="update_scenario()">
-				<option value=null></option>
+			<select id="scenario" onchange="update_scenario()">
+				<option value=null>Scenario</option>
 			</select>
 		</div>
 		<div id="interactions_tab" hidden>
@@ -50,9 +55,9 @@
 		<div id="characters_tab" hidden></div>
 		<div id="scenarios_tab" hidden></div>
 		<div id="other_tabs">
-			<button onclick="toggleTab('messages')">Messages</button><br>
 			<button onclick="toggleTab('interactions_tab')">Interactions</button><br>
 			<button onclick="toggleTab('settings_tab')">Settings</button><br>
+			<button onclick="toggleTab('messages')">Messages</button><br>
 			<button onclick="toggleTab('characters_tab')">Characters</button><br>
 			<button onclick="toggleTab('scenarios_tab')">Scenarios</button><br>
 		<div>
