@@ -1,0 +1,63 @@
+:root, select, option, textarea, input, button {
+	font-size: 16px;
+	font-family: "Courier", monospace;
+}
+
+body {
+	min-height: 100vh;
+	min-width: 100vw;
+	margin: 0;
+	box-sizing: border-box;
+}
+
+.bottom-bar {
+	position: fixed;
+	bottom: 0;
+	height: 9em;
+	background: #eeeeee;
+	width: 100%;
+	padding: 1em;
+	display: flex;
+	justify-content: space-between;
+	box-sizing: border-box;
+	gap: 0.5em;
+}
+
+.bottom-bar textarea {
+	width: 75%;
+	height: 100%;
+	box-sizing: border-box;
+	resize: none;
+}
+
+
+.bottom-bar .stacked {
+	display: flex;
+	flex-direction: column;
+	width: 12em;
+	justify-content: space-between;
+}
+
+.bottom-bar .stacked,
+.bottom-bar .stacked select,
+.bottom-bar .stacked option {
+	text-align: center;
+}
+
+.bottom-bar .stacked label {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.bottom-bar .stacked label input {
+	margin-left: 0.5em;
+}
+
+.bottom-bar .send-message-button {
+	box-sizing: border-box;
+	width: 6em;
+}
