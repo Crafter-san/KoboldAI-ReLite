@@ -27,13 +27,16 @@
 			<select id="user">
 				<option value=null>User Character</option>
 			</select>
-			<label for="respond">AI Autoresponse<input type="checkbox" id="respond" /></label>
+			<input type="checkbox" id="respond" />
+			<label for="respond">AI Autoresponse</label>
 			<select id="puter">
 				<option value=null>AI Character</option>
 			</select>
-			<button onclick="gen()">Gen AI Response</button>
 		</div>
-		<button onclick="send()" id="send_message" class="send-message-button">Send</button>
+		<div class="stacked">
+			<button onclick="send()" id="send_message" class="send-message-button">Send</button>
+			<button onclick="gen()" class="send-message-button">Gen AI Response</button>
+		</div>
 	</div>
 
 	<div id="options">

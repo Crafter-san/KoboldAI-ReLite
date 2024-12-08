@@ -14,7 +14,7 @@ body {
 	position: fixed;
 	bottom: 0;
 	height: 9em;
-	background: #eeeeee;
+	background: #3f48cc;
 	width: 100%;
 	padding: 1em;
 	display: flex;
@@ -30,18 +30,40 @@ body {
 	resize: none;
 }
 
+.bottom-bar textarea,
+.bottom-bar select,
+.bottom-bar option,
+.bottom-bar button,
+.bottom-bar label {
+	border: 0;
+	border-radius: 3px;
+	cursor: pointer;
+}
+
+.bottom-bar textarea {
+	cursor: text;
+}
+
 
 .bottom-bar .stacked {
 	display: flex;
 	flex-direction: column;
 	width: 12em;
-	justify-content: space-between;
+	justify-content: space-around;
+	gap: 0.5em;
+	max-height: 100%;
 }
 
 .bottom-bar .stacked,
 .bottom-bar .stacked select,
-.bottom-bar .stacked option {
+.bottom-bar .stacked option,
+.bottom-bar .stacked button,
+.bottom-bar .stacked label {
 	text-align: center;
+	width: 12em;
+	height: 10em;
+	box-sizing: border-box;
+	vertical-align: middle;
 }
 
 .bottom-bar .stacked label {
@@ -51,13 +73,25 @@ body {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    background: #ed1c42;
+    padding: 3px;
+    line-height: 2em;
 }
 
-.bottom-bar .stacked label input {
-	margin-left: 0.5em;
+.bottom-bar .stacked input {
+	visibility: hidden;
+	display: none;
+}
+
+.bottom-bar .stacked input:checked + label {
+	background: #22b14c;
+}
+
+.bottom-bar .stacked select,
+.bottom-bar .stacked option {
+	background: #fff200;
 }
 
 .bottom-bar .send-message-button {
-	box-sizing: border-box;
-	width: 6em;
+	background: #c8bfe7;
 }
