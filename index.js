@@ -200,7 +200,7 @@ function create () {
 	update();
 }
 function del () {
-	const interaction = document.getElementById("interaction").value;
+	const interaction = document.getElementById("interaction_name").value || document.getElementById("interaction").value;
 	if (!INTERACTIONS.includes(interaction) || !interaction) return;
 	localStorage.removeItem(`memories-${interaction}`);
 	localStorage.removeItem(`characters-${interaction}`);
