@@ -17,6 +17,9 @@
 		<select id="interaction" onchange="update();">
 			<option value=null>Interaction</option>
 		</select>
+		<select id="scenario" onchange="update_scenario()">
+			<option value=null>Scenario</option>
+		</select>
 	</div>
 
 	<div id="messages" class="tab_box" hidden></div>
@@ -54,9 +57,6 @@
 		<button onclick="add()">Add</button><button onclick="remove()">Remove</button>
 		<br />
 		<br />
-		<select id="scenario" onchange="update_scenario()">
-			<option value=null>Scenario</option>
-		</select>
 	</div>
 	<div id="settings_tab" class="tab_box" hidden></div>
 	<div id="characters_tab" class="tab_box" hidden>
