@@ -14,10 +14,10 @@
 	<div class="sticky" id="fallback_bar">
 		<button onclick="toggleTabs()">Tabs</button>
 		<br />
-		<select id="interaction" onchange="update();">
+		<select id="interaction" onchange="update('interaction');">
 			<option value=null>Interaction</option>
 		</select>
-		<select id="scenario" onchange="update_scenario()">
+		<select id="scenario" onchange="update('scenario');">
 			<option value=null>Scenario</option>
 		</select>
 	</div>
@@ -48,8 +48,8 @@
 	<div id="interactions_tab" class="tab_box" hidden>
 	
 		<input id="interaction_name" />
-		<button onclick="del()">Delete</button>
-		<button onclick="create()">Create</button>
+		<button onclick="del('interaction')">Delete</button>
+		<button onclick="create('interaction')">Create</button>
 		<br />
 		<select id="master">
 			<option value=null>Full Character List</option>

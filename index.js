@@ -39,7 +39,7 @@ async function gen () {
 	for (const user of current_interaction.characters) {
 		text += `\n\n<|eot_id|><|start_header_id|>${user}<|end_header_id|>${user}: ${PROMPTS[user]}`;
 	}
-	text += `<|eot_id|><|start_header_id|>Scenario<|end_header_id|>Scenario: ${SCENARIOS[current_interaction.scenario]}`;
+	text += `<|eot_id|><|start_header_id|>Scenario<|end_header_id|>Scenario: ${SCENARIOS[current_interaction.scenario] || "There is no predefined scenario."}`;
 	text += "\n\n---------Interaction Start---------\n\n";
 	for (const memory of current_interaction.memories) {
 		if (!memory.deleted) 	text += `\n\n<|eot_id|><|start_header_id|>${memory.user}<|end_header_id|>${memory.user}: ${memory.text}`;
@@ -73,12 +73,15 @@ const dummy_option = document.createElement("option");
 	dummy_option.value = null;
 	
 function init () {
-	for (const [id, source, label] of [["master", PROMPTS, "Full Character List"], ["master_2", PROMPTS, "Full Character List"], ["master_3", SCENARIOS, "Full Scenario List"]]) {
+	for (const [id, source, label, onchange] of [["master", PROMPTS, "Full Character List"], ["master_2", PROMPTS, "Full Character List"], ["master_3", SCENARIOS, "Scenario"], ["scenario", SCENARIOS, "Scenario", true]]) {
 		
 		INTERACTIONS = JSON.parse(localStorage.getItem("interactions") || "[]");
 		const full_characters = document.createElement("select");
 		full_characters.id = id;
 		const blank_character = dummy_option.cloneNode(true);
+		if (onchange) full_characters.onchange = function () {
+			update(id);
+		}
 		blank_character.innerText = label;
 		full_characters.append(blank_character);
 		for (const [character, desc] of Object.entries(source)) {
@@ -98,7 +101,7 @@ function init () {
 	interaction_selection.id = "interaction";
 	interaction_selection.onchange = function () {
 		console.log("test");
-		update();
+		update('interaction');
 	}
 	const blank_interaction = dummy_option.cloneNode(true);
 	blank_interaction.innerText = "Interaction";
@@ -112,7 +115,7 @@ function init () {
 	document.getElementById("interaction").replaceWith(interaction_selection);
 	
 	
-	const scenario_selection = document.createElement("select");
+	/*const scenario_selection = document.createElement("select");
 	scenario_selection.id = "scenario";
 	
 	//scenario_selection.append(dummy_option.cloneNode(true));
@@ -126,7 +129,7 @@ function init () {
 	scenario_selection.onchange = update_scenario;
 		//current_interaction.scenario = document.getElementById("scenario").value || "none";
 	
-	document.getElementById("scenario").replaceWith(scenario_selection);
+	document.getElementById("scenario").replaceWith(scenario_selection);*/
 }
 function appendMessage (message, message_box) {
 	
@@ -162,69 +165,101 @@ function appendMessage (message, message_box) {
 		message_display.append(username, message_text, del, edit, save);
 		if (!message.deleted) message_box.append(message_display);
 }
-function update() {
-	const message_box = document.createElement("div");
-	message_box.id = "messages";
-	document.getElementById("messages").replaceWith(message_box);
-	console.log("before", document.getElementById("interaction").value);
-	if (!document.getElementById("interaction").value) return;
-	console.log("after");
-	current_interaction.id = document.getElementById("interaction").value;
-	current_interaction.memories = localStorage.getItem(`memories-${current_interaction.id}`);
-	current_interaction.memories = JSON.parse(current_interaction.memories);
-	current_interaction.characters = localStorage.getItem(`characters-${current_interaction.id}`);
-	current_interaction.characters = JSON.parse(current_interaction.characters);
-	user_character = document.createElement("select");
-	ai_character =  document.createElement("select");
-	ai_character.id = "puter";
-	user_character.id = "user";
-	
-	const blank_user = dummy_option.cloneNode(true);
-	
-	const blank_puter = dummy_option.cloneNode(true);
-	blank_user.innerText = "User Character";
-	blank_puter.innerText = "AI Character";
-	
-	user_character.append(blank_user);
-	ai_character.append(blank_puter);
-	for (const character of current_interaction.characters) {
-		const selection = document.createElement("option");
-		selection.value = character;
-		selection.innerText = character;
-		selection.title = PROMPTS[character];
-		user_character.append(selection.cloneNode(true));
-		ai_character.append(selection.cloneNode(true));
+function update(type) {
+	console.log(type);
+	if (type === "interaction") {
+		const message_box = document.createElement("div");
+		message_box.id = "messages";
+		document.getElementById("messages").replaceWith(message_box);
+		console.log("before", document.getElementById("interaction").value);
+		if (!document.getElementById("interaction").value) return;
+		console.log("after");
+		current_interaction.id = document.getElementById("interaction").value;
+		current_interaction.memories = localStorage.getItem(`memories-${current_interaction.id}`);
+		current_interaction.memories = JSON.parse(current_interaction.memories);
+		current_interaction.characters = localStorage.getItem(`characters-${current_interaction.id}`);
+		current_interaction.scenario = localStorage.getItem(`scenario-${current_interaction.id}`);
+		current_interaction.characters = JSON.parse(current_interaction.characters);
+		user_character = document.createElement("select");
+		ai_character =  document.createElement("select");
+		ai_character.id = "puter";
+		user_character.id = "user";
+		
+		const blank_user = dummy_option.cloneNode(true);
+		
+		const blank_puter = dummy_option.cloneNode(true);
+		blank_user.innerText = "User Character";
+		blank_puter.innerText = "AI Character";
+		
+		user_character.append(blank_user);
+		ai_character.append(blank_puter);
+		for (const character of current_interaction.characters) {
+			const selection = document.createElement("option");
+			selection.value = character;
+			selection.innerText = character;
+			selection.title = PROMPTS[character];
+			user_character.append(selection.cloneNode(true));
+			ai_character.append(selection.cloneNode(true));
+		}
+		document.getElementById("user").replaceWith(user_character);
+		document.getElementById("puter").replaceWith(ai_character);
+		document.getElementById("scenario").value = current_interaction.scenario;
+		for (const message of current_interaction.memories) {
+			appendMessage(message, message_box);
+		}
+	} else if (type === "scenario") {
+		console.log("boo");
+		const interaction = document.getElementById("interaction").value;
+		if (!INTERACTIONS.includes(interaction) || !interaction) return;
+		const scenario = document.getElementById("scenario").value;
+
+		localStorage.setItem(`scenario-${interaction}`, scenario);
+		current_interaction.scenario = scenario;
 	}
-	document.getElementById("user").replaceWith(user_character);
-	document.getElementById("puter").replaceWith(ai_character);
-	for (const message of current_interaction.memories) {
-		appendMessage(message, message_box);
+	
+}
+function create (type) {
+	if (type === "interaction") {
+		const interaction = document.getElementById("interaction_name").value;
+		if (INTERACTIONS.includes(interaction)) return;
+		localStorage.setItem(`memories-${interaction}`, "[]");
+		localStorage.setItem(`characters-${interaction}`, "[]");
+		localStorage.setItem(`scenario-${interaction}`, "none");
+		INTERACTIONS.push(interaction);
+		localStorage.setItem("interactions", JSON.stringify(INTERACTIONS)); 
+		init();
+		update();
+
+	}
+	else if (type === "scenario") {
+		
+		
+	}
+	else if (type === "character") {
+		
+		
 	}
 }
-function create () {
-	const interaction = document.getElementById("interaction_name").value;
-	if (INTERACTIONS.includes(interaction)) return;
-	localStorage.setItem(`memories-${interaction}`, "[]");
-	localStorage.setItem(`characters-${interaction}`, "[]");
-	localStorage.setItem(`scenario-${interaction}`, "none");
-	INTERACTIONS.push(interaction);
-	localStorage.setItem("interactions", JSON.stringify(INTERACTIONS)); 
-	init();
-	update();
-}
-function del () {
-	const interaction = document.getElementById("interaction_name").value || document.getElementById("interaction").value;
-	if (!INTERACTIONS.includes(interaction) || !interaction) return;
-	localStorage.removeItem(`memories-${interaction}`);
-	localStorage.removeItem(`characters-${interaction}`);
-	localStorage.removeItem(`scenario-${interaction}`);
-	delete INTERACTIONS[INTERACTIONS.indexOf(interaction)];
-	INTERACTIONS = INTERACTIONS.filter(function (element) {
-		return !!element;
-	});
-	localStorage.setItem("interactions", JSON.stringify(INTERACTIONS));
-	init();
-	update();
+function del (type) {
+	if (type === "interaction") {
+		const interaction = document.getElementById("interaction_name").value || document.getElementById("interaction").value;
+		if (!INTERACTIONS.includes(interaction) || !interaction) return;
+		localStorage.removeItem(`memories-${interaction}`);
+		localStorage.removeItem(`characters-${interaction}`);
+		localStorage.removeItem(`scenario-${interaction}`);
+		delete INTERACTIONS[INTERACTIONS.indexOf(interaction)];
+		INTERACTIONS = INTERACTIONS.filter(function (element) {
+			return !!element;
+		});
+		localStorage.setItem("interactions", JSON.stringify(INTERACTIONS));
+		init();
+		update();
+	} else if (type === "scenario") {
+		
+	} else if (type === "character") {
+		
+	}
+		
 }
 function add () {
 	console.log("adding");
@@ -251,15 +286,6 @@ function remove () {
 	update();
 }
 
-function update_scenario() {
-	console.log("boo");
-	const interaction = document.getElementById("interaction").value;
-	if (!INTERACTIONS.includes(interaction) || !interaction) return;
-	const scenario = document.getElementById("scenario").value;
-
-	localStorage.setItem(`scenario-${interaction}`, scenario);
-	current_interaction.scenario = scenario;
-}
 const TABS = ["settings_tab", "characters_tab", "scenarios_tab", "interactions_tab", "messages"];
 function toggleTab (tabname) {
 	for (const tab of TABS) {
