@@ -2,12 +2,13 @@
 let replying = false;
 const current_interaction = {};
 let INTERACTIONS = [];
-async function gen () {
-	if (!current_interaction.id) return;
+
+async function prompt (text) {
+	if (!text) return;
 	const api_body = {
 	  "max_context_length": 8000,
 	  "max_length": 300,
-	  "prompt":  "\n\n",
+	  "prompt":  text,
 	  "quiet": false,
 	  "rep_pen": 1.1,
 	  "rep_pen_range": 256,
@@ -19,18 +20,6 @@ async function gen () {
 	  "top_p": 0.9,
 	  "typical": 1
 	};
-	for (const user of current_interaction.characters) {
-		api_body.prompt += `\n\n<|eot_id|><|start_header_id|>${user}<|end_header_id|>${user}: ${PROMPTS[user]}`;
-	}
-	api_body.prompt += `<|eot_id|><|start_header_id|>Scenario<|end_header_id|>Scenario: ${SCENARIOS[current_interaction.scenario]}`;
-	api_body.prompt += "\n\n---------Interaction Start---------\n\n";
-	for (const memory of current_interaction.memories) {
-		if (!memory.deleted) 	api_body.prompt += `\n\n<|eot_id|><|start_header_id|>${memory.user}<|end_header_id|>${memory.user}: ${memory.text}`;
-	}
-	const character = document.getElementById("puter");
-	if (!character) return;
-	api_body.prompt += `\n\n<|eot_id|><|start_header_id|>${character.value}<|end_header_id|>${character.value}: `;
-	
 	let response = await fetch(SETTINGS.url + "/api/v1/generate", {
 		method: "POST",
 	  body: JSON.stringify(api_body),
@@ -42,6 +31,25 @@ async function gen () {
 	console.log(response);
 	if (!response.results[0].text) return await gen();
 	response = response.results[0].text;
+	return response;
+};
+async function gen () {
+	if (!current_interaction.id) return;
+	let text = "";
+	for (const user of current_interaction.characters) {
+		text += `\n\n<|eot_id|><|start_header_id|>${user}<|end_header_id|>${user}: ${PROMPTS[user]}`;
+	}
+	text += `<|eot_id|><|start_header_id|>Scenario<|end_header_id|>Scenario: ${SCENARIOS[current_interaction.scenario]}`;
+	text += "\n\n---------Interaction Start---------\n\n";
+	for (const memory of current_interaction.memories) {
+		if (!memory.deleted) 	text += `\n\n<|eot_id|><|start_header_id|>${memory.user}<|end_header_id|>${memory.user}: ${memory.text}`;
+	}
+	const character = document.getElementById("puter").value;
+	console.log(character);	
+	if (character === "null") return console.log("cancelling, no puter");
+	text += `\n\n<|eot_id|><|start_header_id|>${character.value}<|end_header_id|>${character.value}: `;
+	
+	let response = await prompt(text);
 	//return ;
 	const message = {};
 	message.user = document.getElementById("puter").value;
@@ -65,21 +73,26 @@ const dummy_option = document.createElement("option");
 	dummy_option.value = null;
 	
 function init () {
-	INTERACTIONS = JSON.parse(localStorage.getItem("interactions") || "[]");
-	const full_characters = document.createElement("select");
-	full_characters.id = "master";
-	const blank_character = dummy_option.cloneNode(true);
-	blank_character.innerText = "Full Character List";
-	full_characters.append(blank_character);
-	for (const [character, desc] of Object.entries(PROMPTS)) {
-		const character_option = document.createElement("option");
-		character_option.value = character;
-		console.log(desc);
-		character_option.title = desc;
-		character_option.innerText = character;
-		full_characters.append(character_option);
+	for (const [id, source, label] of [["master", PROMPTS, "Full Character List"], ["master_2", PROMPTS, "Full Character List"], ["master_3", SCENARIOS, "Full Scenario List"]]) {
+		
+		INTERACTIONS = JSON.parse(localStorage.getItem("interactions") || "[]");
+		const full_characters = document.createElement("select");
+		full_characters.id = id;
+		const blank_character = dummy_option.cloneNode(true);
+		blank_character.innerText = label;
+		full_characters.append(blank_character);
+		for (const [character, desc] of Object.entries(source)) {
+			const character_option = document.createElement("option");
+			character_option.value = character;
+			console.log(desc);
+			character_option.title = desc;
+			character_option.innerText = character;
+			full_characters.append(character_option);
+		}
+		document.getElementById(id).replaceWith(full_characters);
+		
+		
 	}
-	document.getElementById("master").replaceWith(full_characters);
 	
 	const interaction_selection = document.createElement("select");
 	interaction_selection.id = "interaction";
@@ -262,6 +275,7 @@ function send () {
 	if (!current_interaction.id) return;
 	const message = {};
 	message.user = document.getElementById("user").value;
+	if (message.user === "null") return;
 	message.id = current_interaction.memories.length;
 	message.text = document.getElementById("message").value;
 	if (message.text.length > 1) {
