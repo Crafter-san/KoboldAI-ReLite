@@ -73,7 +73,7 @@ const dummy_option = document.createElement("option");
 	dummy_option.value = null;
 	
 function init () {
-	for (const [id, source, label, onchange] of [["master", PROMPTS, "Full Character List"], ["master_2", PROMPTS, "Full Character List"], ["master_3", SCENARIOS, "Scenario"], ["scenario", SCENARIOS, "Scenario", true]]) {
+	for (const [id, source, label, onchange] of [["master", PROMPTS, "Full Character List"], ["master_2", PROMPTS, "Full Character List", true], ["master_3", SCENARIOS, "Scenario", true], ["scenario", SCENARIOS, "Scenario", true]]) {
 		
 		INTERACTIONS = JSON.parse(localStorage.getItem("interactions") || "[]");
 		const full_characters = document.createElement("select");
@@ -215,6 +215,16 @@ function update(type) {
 
 		localStorage.setItem(`scenario-${interaction}`, scenario);
 		current_interaction.scenario = scenario;
+	} else if (type === "master_2") {
+		const character = document.getElementById("master_2").value;
+		console.log(character);
+		document.getElementById("character_name").value = character;
+		document.getElementById("character_description").value = PROMPTS[character];
+	} else if (type === "master_3") {
+		const character = document.getElementById("master_3").value;
+		console.log(character);
+		document.getElementById("scenario_name").value = character;
+		document.getElementById("scenario_description").value = SCENARIOS[character];
 	}
 	
 }
@@ -227,18 +237,26 @@ function create (type) {
 		localStorage.setItem(`scenario-${interaction}`, "none");
 		INTERACTIONS.push(interaction);
 		localStorage.setItem("interactions", JSON.stringify(INTERACTIONS)); 
-		init();
-		update();
 
 	}
 	else if (type === "scenario") {
+		const name = document.getElementById("scenario_name").value;
+		const description = document.getElementById("scenario_description").value;
+		if (name && description) {
+			SCENARIOS[name] = description;
+		}
 		
 		
 	}
 	else if (type === "character") {
-		
-		
+		const name = document.getElementById("character_name").value;
+		const description = document.getElementById("character_description").value;
+		if (name && description) {
+			PROMPTS[name] = description;
+		}
 	}
+		init();
+		update();
 }
 function del (type) {
 	if (type === "interaction") {
@@ -252,14 +270,22 @@ function del (type) {
 			return !!element;
 		});
 		localStorage.setItem("interactions", JSON.stringify(INTERACTIONS));
-		init();
-		update();
 	} else if (type === "scenario") {
 		
+		const character = document.getElementById("scenario_name").value;
+		if (character) {
+			delete SCENARIOS[character];
+		}
 	} else if (type === "character") {
 		
+		const character = document.getElementById("character_name").value;
+		if (character) {
+			delete PROMPTS[character];
+		}
 	}
 		
+		init();
+		update();
 }
 function add () {
 	console.log("adding");
@@ -333,4 +359,31 @@ function send () {
 		await webhook(WHITELIST[msg.channel.id].webhook[MEMORIES[msg.channel.id].awaiting_user.n], response);*/
 };
 
+
+
+function export_file (name, type, content) {
+	const file = new File([content], name, {type});
+	url = window.URL.createObjectURL(file);
+	const a = document.createElement("a");
+	a.style = "display: none";
+	a.href = url;
+	a.download = file.name;
+	a.click();
+	window.URL.revokeObjectURL(url);
+}
+
+
+function export_button (id) {
+	const filetype = "text/javascript";
+	let content = "";
+	let filename = "";
+	if (id === "scenarios") {
+		filename = "scenarios.js";
+		content = JSON.stringify(SCENARIOS);
+	} else if (id === "characters") {
+		filename = "prompts.js";
+		content = JSON.stringify(PROMPTS);
+	}
+	export_file(filename, filetype, content);
+}
 setTimeout(init, 1000);

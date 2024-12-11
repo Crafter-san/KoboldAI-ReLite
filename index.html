@@ -60,12 +60,22 @@
 	</div>
 	<div id="settings_tab" class="tab_box" hidden></div>
 	<div id="characters_tab" class="tab_box" hidden>
-		<select id="master_2">
+		<button onclick="export_button('characters');">Export</button>
+		<input id="character_name" />
+		<textarea id="character_description"></textarea>
+		<button onclick="del('character')">Delete</button>
+		<button onclick="create('character')">Save</button>
+		<select id="master_2" onchange="update('master_2')">
 			<option value=null>Full Character List</option>
 		</select>
 	</div>
 	<div id="scenarios_tab" class="tab_box" hidden>
-		<select id="master_3">
+		<button onclick="export_button('scenarios');">Export</button>
+		<input id="scenario_name" />
+		<textarea id="scenario_description"></textarea>
+		<button onclick="del('scenario')">Delete</button>
+		<button onclick="create('scenario')">Save</button>
+		<select id="master_3" onchange="update('master_3');">
 			<option value=null>Full Scenario List</option>
 		</select>
 	</div>
