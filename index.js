@@ -6,20 +6,11 @@ let INTERACTIONS = [];
 async function prompt (text) {
 	if (!text) return;
 	const api_body = {
-	  "max_context_length": 8000,
-	  "max_length": 300,
-	  "prompt":  text,
-	  "quiet": false,
-	  "rep_pen": 1.1,
-	  "rep_pen_range": 256,
-	  "rep_pen_slope": 1,
-	  "temperature": 0.9,
-	  "tfs": 1,
-	  "top_a": 0,
-	  "top_k": 100,
-	  "top_p": 0.9,
-	  "typical": 1
 	};
+	for (const [id, value] of Object.entries(PROMPTCONFIG)) {
+		api_body[id] = value;
+	}
+	api_body.prompt += text;
 	let response = await fetch(SETTINGS.url + "/api/v1/generate", {
 		method: "POST",
 	  body: JSON.stringify(api_body),
@@ -167,19 +158,7 @@ function appendMessage (message, message_box) {
 }
 function update(type) {
 	console.log(type);
-	if (type === "interaction") {
-		const message_box = document.createElement("div");
-		message_box.id = "messages";
-		document.getElementById("messages").replaceWith(message_box);
-		console.log("before", document.getElementById("interaction").value);
-		if (!document.getElementById("interaction").value) return;
-		console.log("after");
-		current_interaction.id = document.getElementById("interaction").value;
-		current_interaction.memories = localStorage.getItem(`memories-${current_interaction.id}`);
-		current_interaction.memories = JSON.parse(current_interaction.memories);
-		current_interaction.characters = localStorage.getItem(`characters-${current_interaction.id}`);
-		current_interaction.scenario = localStorage.getItem(`scenario-${current_interaction.id}`);
-		current_interaction.characters = JSON.parse(current_interaction.characters);
+	if (type === "message_box") {
 		user_character = document.createElement("select");
 		ai_character =  document.createElement("select");
 		ai_character.id = "puter";
@@ -204,6 +183,21 @@ function update(type) {
 		document.getElementById("user").replaceWith(user_character);
 		document.getElementById("puter").replaceWith(ai_character);
 		document.getElementById("scenario").value = current_interaction.scenario;
+	}
+	if (type === "interaction") {
+		const message_box = document.createElement("div");
+		message_box.id = "messages";
+		document.getElementById("messages").replaceWith(message_box);
+		console.log("before", document.getElementById("interaction").value);
+		if (!document.getElementById("interaction").value) return;
+		console.log("after");
+		current_interaction.id = document.getElementById("interaction").value;
+		current_interaction.memories = localStorage.getItem(`memories-${current_interaction.id}`);
+		current_interaction.memories = JSON.parse(current_interaction.memories);
+		current_interaction.characters = localStorage.getItem(`characters-${current_interaction.id}`);
+		current_interaction.scenario = localStorage.getItem(`scenario-${current_interaction.id}`);
+		current_interaction.characters = JSON.parse(current_interaction.characters);
+		update("message_box");
 		for (const message of current_interaction.memories) {
 			appendMessage(message, message_box);
 		}
@@ -296,7 +290,8 @@ function add () {
 	
 	current_interaction.characters.push(character);
 	localStorage.setItem(`characters-${interaction}`, JSON.stringify(current_interaction.characters));
-	update();
+	init();
+	update("message_box");
 }
 function remove () {
 	const interaction = document.getElementById("interaction").value;
@@ -309,7 +304,8 @@ function remove () {
 		return !!element;
 	});
 	localStorage.setItem(`characters-${interaction}`, JSON.stringify(current_interaction.characters));
-	update();
+	init();
+	update("message_box");
 }
 
 const TABS = ["settings_tab", "characters_tab", "scenarios_tab", "interactions_tab", "messages"];

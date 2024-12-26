@@ -36,3 +36,19 @@ const SETTINGS = {
 				Ready to tackle whatever file you toss its way, and it looks cute too! :star2:`
 		}
 };
+
+const PROMPTCONFIG = {
+	  "max_context_length": 8000,
+	  "max_length": 300,
+	  "quiet": false,
+	  "rep_pen": 1.1,
+	  "rep_pen_range": 256,
+	  "rep_pen_slope": 1,
+	  "temperature": 0.9,
+	  "tfs": 1,
+	  "top_a": 0,
+	  "top_k": 100,
+	  "top_p": 0.9,
+	  "typical": 1,
+	  "prompt":  ""
+};

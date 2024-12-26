@@ -1,5 +1,1 @@
-const PROMPTS = {
-	"Buck": "Buck is a male human that (ironically) likes hunting deer.",
-	"Lisa": "Lisa is a female human that likes living in the woods",
-	"Tommy": "Tommy is a male cat that enjoys spaghetti. Does not speak english, only meows, hisses, and mewls."
-};
+const PROMPTS = {"Buck":"Buck is a male human that (ironically) likes hunting deer.","Lisa":"Lisa is a female human that likes living in the woods","Tommy":"Tommy is a male cat that enjoys spaghetti. Does not speak english, only meows, hisses, and mewls.","User":"Person using computer","AI Assistant":"Follows instructions given by User. Assists however they can."}
