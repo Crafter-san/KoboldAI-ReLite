@@ -11,7 +11,7 @@ body {
 }
 
 .bottom-bar {
-	position: fixed;
+	position: relative;
 	bottom: 0;
 	height: 9em;
 	background: #3f48cc;

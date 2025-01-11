@@ -38,7 +38,7 @@ async function gen () {
 	const character = document.getElementById("puter").value;
 	console.log(character);	
 	if (character === "null") return console.log("cancelling, no puter");
-	text += `\n\n<|eot_id|><|start_header_id|>${character.value}<|end_header_id|>${character.value}: `;
+	text += `\n\n<|eot_id|><|start_header_id|>${character}<|end_header_id|>${character}: `;
 	
 	let response = await prompt(text);
 	//return ;
@@ -104,7 +104,7 @@ function init () {
 		interaction_selection.append(select);
 	}
 	document.getElementById("interaction").replaceWith(interaction_selection);
-	
+	if ((current_interaction.id || document.getElementById("interaction_name"))) document.getElementById("interaction").value = current_interaction.id || document.getElementById("interaction_name").value, update("interaction");
 	
 	/*const scenario_selection = document.createElement("select");
 	scenario_selection.id = "scenario";
@@ -156,7 +156,7 @@ function appendMessage (message, message_box) {
 		message_display.append(username, message_text, del, edit, save);
 		if (!message.deleted) message_box.append(message_display);
 }
-function update(type) {
+function update(type, redo) {
 	console.log(type);
 	if (type === "message_box") {
 		user_character = document.createElement("select");
@@ -188,9 +188,9 @@ function update(type) {
 		const message_box = document.createElement("div");
 		message_box.id = "messages";
 		document.getElementById("messages").replaceWith(message_box);
-		console.log("before", document.getElementById("interaction").value);
+		//console.log("before", document.getElementById("interaction").value);
 		if (!document.getElementById("interaction").value) return;
-		console.log("after");
+		//console.log("after");
 		current_interaction.id = document.getElementById("interaction").value;
 		current_interaction.memories = localStorage.getItem(`memories-${current_interaction.id}`);
 		current_interaction.memories = JSON.parse(current_interaction.memories);
@@ -201,6 +201,7 @@ function update(type) {
 		for (const message of current_interaction.memories) {
 			appendMessage(message, message_box);
 		}
+		
 	} else if (type === "scenario") {
 		console.log("boo");
 		const interaction = document.getElementById("interaction").value;
@@ -220,6 +221,8 @@ function update(type) {
 		document.getElementById("scenario_name").value = character;
 		document.getElementById("scenario_description").value = SCENARIOS[character];
 	}
+	
+	
 	
 }
 function create (type) {
