@@ -2,7 +2,6 @@
 let replying = false;
 const current_interaction = {};
 let INTERACTIONS = [];
-
 async function prompt (text) {
 	if (!text) return;
 	const api_body = {
@@ -28,9 +27,15 @@ async function gen () {
 	if (!current_interaction.id) return;
 	let text = "";
 	for (const user of current_interaction.characters) {
-		text += `\n\n<|eot_id|><|start_header_id|>${user}<|end_header_id|>${user}: ${PROMPTS[user]}`;
+		let tempPrompt = "";
+		tempPrompt = PROMPTS[user].replaceAll("{{user}}", document.getElementById("user").value);
+		tempPrompt = tempPrompt.replaceAll("{{char}}", document.getElementById("puter").value);
+		text += `\n\n<|eot_id|><|start_header_id|>${user}<|end_header_id|>${user}: ${tempPrompt}`;
 	}
-	text += `<|eot_id|><|start_header_id|>Scenario<|end_header_id|>Scenario: ${SCENARIOS[current_interaction.scenario] || "There is no predefined scenario."}`;
+	let tempScenario = "";
+	tempScenario = (SCENARIOS[current_interaction.scenario] || "There is no predefined scenario.").replaceAll("{{user}}", document.getElementById("user").value);
+	tempScenario = tempScenario.replaceAll("{{char}}", document.getElementById("puter").value);
+	text += `<|eot_id|><|start_header_id|>Scenario<|end_header_id|>Scenario: ${tempScenario}`;
 	text += "\n\n---------Interaction Start---------\n\n";
 	for (const memory of current_interaction.memories) {
 		if (!memory.deleted) 	text += `\n\n<|eot_id|><|start_header_id|>${memory.user}<|end_header_id|>${memory.user}: ${memory.text}`;
@@ -51,6 +56,7 @@ async function gen () {
 	appendMessage(message, document.getElementById("messages"));
 	localStorage.setItem(`memories-${current_interaction.id}`, JSON.stringify(current_interaction.memories));
 }
+
 function trim(str = "", maxlen = 2000, extraEnders = []) {
 	let enders = ['.', '!', '?', '*', '"', ')', '}', '`', ']', ';', '…', ...extraEnders];
 	str = str.slice(0,maxlen);
