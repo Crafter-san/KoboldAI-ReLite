@@ -26,10 +26,13 @@ async function prompt (text) {
 async function gen () {
 	if (!current_interaction.id) return;
 	let text = "";
+	const CURRENT_USER = document.getElementById("user").value;
+	const CURRENT_PUTER = document.getElementById("puter").value;
 	for (const user of current_interaction.characters) {
 		let tempPrompt = "";
-		tempPrompt = PROMPTS[user].replaceAll("{{user}}", document.getElementById("user").value);
-		tempPrompt = tempPrompt.replaceAll("{{char}}", document.getElementById("puter").value);
+		tempPrompt = PROMPTS[user].replaceAll("{{user}}", CURRENT_USER);
+		tempPrompt = tempPrompt.replaceAll("{{char}}", CURRENT_PUTER);
+		tempPrompt = PROMPTS[user].replaceAll("{{persona}}", user);
 		text += `\n\n<|eot_id|><|start_header_id|>${user}<|end_header_id|>${user}: ${tempPrompt}`;
 	}
 	let tempScenario = "";
@@ -384,10 +387,10 @@ function export_button (id) {
 	let filename = "";
 	if (id === "scenarios") {
 		filename = "scenarios.js";
-		content = JSON.stringify(SCENARIOS);
+		content = "const SCENARIOS = " + JSON.stringify(SCENARIOS, null, 2) + ";";
 	} else if (id === "characters") {
 		filename = "prompts.js";
-		content = JSON.stringify(PROMPTS);
+		content = "const PROMPTS = " + JSON.stringify(PROMPTS, null, 2) + ";";
 	}
 	export_file(filename, filetype, content);
 }
