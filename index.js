@@ -32,7 +32,7 @@ async function gen () {
 		let tempPrompt = "";
 		tempPrompt = PROMPTS[user].replaceAll("{{user}}", CURRENT_USER);
 		tempPrompt = tempPrompt.replaceAll("{{char}}", CURRENT_PUTER);
-		tempPrompt = PROMPTS[user].replaceAll("{{persona}}", user);
+		tempPrompt = tempPrompt.replaceAll("{{persona}}", user);
 		text += `\n\n<|eot_id|><|start_header_id|>${user}<|end_header_id|>${user}: ${tempPrompt}`;
 	}
 	let tempScenario = "";
@@ -47,7 +47,7 @@ async function gen () {
 	console.log(character);	
 	if (character === "null") return console.log("cancelling, no puter");
 	text += `\n\n<|eot_id|><|start_header_id|>${character}<|end_header_id|>${character}: `;
-	
+	console.log(text);
 	let response = await prompt(text);
 	//return ;
 	const message = {};
@@ -58,6 +58,17 @@ async function gen () {
 	current_interaction.memories.push(message);
 	appendMessage(message, document.getElementById("messages"));
 	localStorage.setItem(`memories-${current_interaction.id}`, JSON.stringify(current_interaction.memories));
+	console.log(response.split("||"));
+	if (response.split("||")[1]) {
+		const turn = response.split("||")[1];
+		if (turn !== CURRENT_USER) {
+			document.getElementById("puter").value = turn;
+			await gen();
+		}
+	} else if (message.user !== "Reasoning") {
+		document.getElementById("puter").value = "Reasoning";
+		await gen();
+	}
 }
 
 function trim(str = "", maxlen = 2000, extraEnders = []) {
@@ -350,6 +361,7 @@ function send () {
 			//message_text.innerText = message.text;
 			//message_display.append(username, message_text, del, edit, save);
 			appendMessage(message, document.getElementById("messages"));
+			
 	}
 	if (document.getElementById("respond").checked) gen();
 	/*document.getElementById("send_message").disabled = true;
