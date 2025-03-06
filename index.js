@@ -65,7 +65,7 @@ async function gen () {
 			document.getElementById("puter").value = turn;
 			await gen();
 		}
-	} else if (message.user !== "Reasoning") {
+	} else if (message.user !== "Reasoning" && current_interaction.characters.includes("Reasoning")) {
 		document.getElementById("puter").value = "Reasoning";
 		await gen();
 	}
