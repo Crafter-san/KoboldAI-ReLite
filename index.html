@@ -12,18 +12,66 @@
 	<script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
 </head>
 <body>
-	<div class="sticky" id="fallback_bar">
+	<div class="side-bar">
 		<button onclick="toggleTabs()">Tabs</button>
-		<br />
 		<select id="interaction" onchange="update('interaction');">
 			<option value=null>Interaction</option>
 		</select>
 		<select id="scenario" onchange="update('scenario');">
 			<option value=null>Scenario</option>
 		</select>
+
+		<div id="other_tabs">
+			<button onclick="toggleTab('interactions_tab')">Interactions</button>
+			<button onclick="toggleTab('settings_tab')">Settings</button>
+			<button onclick="toggleTab('messages')">Messages</button>
+			<button onclick="toggleTab('characters_tab')">Characters</button>
+			<button onclick="toggleTab('scenarios_tab')">Scenarios</button>
+		</div>
 	</div>
 
-	<div id="messages" class="tab_box" hidden></div>
+	<div class="content-box">
+
+		<div id="messages" class="tab_box" hidden></div>
+
+		<div id="options">
+		</div>
+
+		<div id="interactions_tab" class="tab_box" hidden>
+
+			<input id="interaction_name" />
+			<button onclick="del('interaction')">Delete</button>
+			<button onclick="create('interaction')">Create</button>
+			<br />
+			<select id="master">
+				<option value=null>Full Character List</option>
+			</select>
+			<button onclick="add()">Add</button><button onclick="remove()">Remove</button>
+			<br />
+			<br />
+		</div>
+		<div id="settings_tab" class="tab_box" hidden></div>
+		<div id="characters_tab" class="tab_box" hidden>
+			<button onclick="export_button('characters');">Export</button>
+			<input id="character_name" />
+			<textarea id="character_description"></textarea>
+			<button onclick="del('character')">Delete</button>
+			<button onclick="create('character')">Save</button>
+			<select id="master_2" onchange="update('master_2')">
+				<option value=null>Full Character List</option>
+			</select>
+		</div>
+		<div id="scenarios_tab" class="tab_box" hidden>
+			<button onclick="export_button('scenarios');">Export</button>
+			<input id="scenario_name" />
+			<textarea id="scenario_description"></textarea>
+			<button onclick="del('scenario')">Delete</button>
+			<button onclick="create('scenario')">Save</button>
+			<select id="master_3" onchange="update('master_3');">
+				<option value=null>Full Scenario List</option>
+			</select>
+		</div>
+	</div>
 
 	<div id="message_box" class="bottom-bar">
 		<textarea id="message"></textarea>
@@ -42,52 +90,6 @@
 			<button onclick="gen()" class="send-message-button">Gen AI Response</button>
 		</div>
 	</div>
-
-	<div id="options">
-	</div>
-
-	<div id="interactions_tab" class="tab_box" hidden>
-	
-		<input id="interaction_name" />
-		<button onclick="del('interaction')">Delete</button>
-		<button onclick="create('interaction')">Create</button>
-		<br />
-		<select id="master">
-			<option value=null>Full Character List</option>
-		</select>
-		<button onclick="add()">Add</button><button onclick="remove()">Remove</button>
-		<br />
-		<br />
-	</div>
-	<div id="settings_tab" class="tab_box" hidden></div>
-	<div id="characters_tab" class="tab_box" hidden>
-		<button onclick="export_button('characters');">Export</button>
-		<input id="character_name" />
-		<textarea id="character_description"></textarea>
-		<button onclick="del('character')">Delete</button>
-		<button onclick="create('character')">Save</button>
-		<select id="master_2" onchange="update('master_2')">
-			<option value=null>Full Character List</option>
-		</select>
-	</div>
-	<div id="scenarios_tab" class="tab_box" hidden>
-		<button onclick="export_button('scenarios');">Export</button>
-		<input id="scenario_name" />
-		<textarea id="scenario_description"></textarea>
-		<button onclick="del('scenario')">Delete</button>
-		<button onclick="create('scenario')">Save</button>
-		<select id="master_3" onchange="update('master_3');">
-			<option value=null>Full Scenario List</option>
-		</select>
-	</div>
-	<div id="other_tabs">
-		<button onclick="toggleTab('interactions_tab')">Interactions</button><br>
-		<button onclick="toggleTab('settings_tab')">Settings</button><br>
-		<button onclick="toggleTab('messages')">Messages</button><br>
-		<button onclick="toggleTab('characters_tab')">Characters</button><br>
-		<button onclick="toggleTab('scenarios_tab')">Scenarios</button><br>
-	<div>
-
 
 </body>
 </html>

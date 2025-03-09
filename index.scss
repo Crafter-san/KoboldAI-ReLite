@@ -1,0 +1,115 @@
+:root, select, option, textarea, input, button {
+    font-size: 16px;
+    font-family: "Courier", monospace;
+}
+
+body {
+    min-height: 100vh;
+    min-width: 100vw;
+    margin: 0;
+    box-sizing: border-box;
+
+    display: grid;
+    grid-template-areas:
+        "sidebar content"
+        "sidebar bottom";
+    grid-template-columns: 5fr 95fr;
+    grid-template-rows: auto 8em;
+}
+
+.bottom-bar {
+    position: relative;
+    bottom: 0;
+    background: #3f48cc;
+    padding: 1em;
+    display: flex;
+    justify-content: space-between;
+    box-sizing: border-box;
+    gap: 0.5em;
+    right: 0;
+
+    grid-area: bottom;
+
+    textarea {
+        width: 75%;
+        height: 100%;
+        box-sizing: border-box;
+        resize: none;
+        cursor: text;
+    }
+
+    textarea,
+    select,
+    option,
+    button,
+    label {
+        border: 0;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+
+    .stacked {
+        display: flex;
+        flex-direction: column;
+        width: 12em;
+        justify-content: space-around;
+        gap: 0.5em;
+        max-height: 100%;
+    }
+
+    .stacked {
+        &,
+        & select,
+        & option,
+        & button,
+        & label {
+            text-align: center;
+            width: 12em;
+            height: 10em;
+            box-sizing: border-box;
+            vertical-align: middle;
+        }
+
+        label {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            background: #ed1c42;
+            padding: 3px;
+            line-height: 2em;
+        }
+
+        input {
+            visibility: hidden;
+            display: none;
+
+            &:checked + label {
+                background: #22b14c;
+            }
+        }
+
+        select,
+        option {
+            background: #fff200;
+        }
+    }
+
+    .send-message-button {
+        background: #c8bfe7;
+    }
+
+}
+
+.side-bar {
+    grid-area: sidebar;
+    background: #cc3333;
+    padding: 1em;
+}
+
+.content-box {
+    grid-area: content;
+    padding: 1em;
+}

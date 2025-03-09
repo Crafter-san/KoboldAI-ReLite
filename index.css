@@ -1,97 +1,97 @@
 :root, select, option, textarea, input, button {
-	font-size: 16px;
-	font-family: "Courier", monospace;
+  font-size: 16px;
+  font-family: "Courier", monospace;
 }
 
 body {
-	min-height: 100vh;
-	min-width: 100vw;
-	margin: 0;
-	box-sizing: border-box;
+  min-height: 100vh;
+  min-width: 100vw;
+  margin: 0;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-areas: "sidebar content" "sidebar bottom";
+  grid-template-columns: 5fr 95fr;
+  grid-template-rows: auto 8em;
 }
 
 .bottom-bar {
-	position: relative;
-	bottom: 0;
-	height: 9em;
-	background: #3f48cc;
-	width: 100%;
-	padding: 1em;
-	display: flex;
-	justify-content: space-between;
-	box-sizing: border-box;
-	gap: 0.5em;
+  position: relative;
+  bottom: 0;
+  background: #3f48cc;
+  padding: 1em;
+  display: flex;
+  justify-content: space-between;
+  box-sizing: border-box;
+  gap: 0.5em;
+  right: 0;
+  grid-area: bottom;
 }
-
 .bottom-bar textarea {
-	width: 75%;
-	height: 100%;
-	box-sizing: border-box;
-	resize: none;
+  width: 75%;
+  height: 100%;
+  box-sizing: border-box;
+  resize: none;
+  cursor: text;
 }
-
 .bottom-bar textarea,
 .bottom-bar select,
 .bottom-bar option,
 .bottom-bar button,
 .bottom-bar label {
-	border: 0;
-	border-radius: 3px;
-	cursor: pointer;
+  border: 0;
+  border-radius: 3px;
+  cursor: pointer;
 }
-
-.bottom-bar textarea {
-	cursor: text;
-}
-
-
 .bottom-bar .stacked {
-	display: flex;
-	flex-direction: column;
-	width: 12em;
-	justify-content: space-around;
-	gap: 0.5em;
-	max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  width: 12em;
+  justify-content: space-around;
+  gap: 0.5em;
+  max-height: 100%;
 }
-
-.bottom-bar .stacked,
-.bottom-bar .stacked select,
-.bottom-bar .stacked option,
-.bottom-bar .stacked button,
+.bottom-bar .stacked, .bottom-bar .stacked select, .bottom-bar .stacked option, .bottom-bar .stacked button, .bottom-bar .stacked label {
+  text-align: center;
+  width: 12em;
+  height: 10em;
+  box-sizing: border-box;
+  vertical-align: middle;
+}
 .bottom-bar .stacked label {
-	text-align: center;
-	width: 12em;
-	height: 10em;
-	box-sizing: border-box;
-	vertical-align: middle;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  background: #ed1c42;
+  padding: 3px;
+  line-height: 2em;
 }
-
-.bottom-bar .stacked label {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    background: #ed1c42;
-    padding: 3px;
-    line-height: 2em;
-}
-
 .bottom-bar .stacked input {
-	visibility: hidden;
-	display: none;
+  visibility: hidden;
+  display: none;
 }
-
 .bottom-bar .stacked input:checked + label {
-	background: #22b14c;
+  background: #22b14c;
 }
-
 .bottom-bar .stacked select,
 .bottom-bar .stacked option {
-	background: #fff200;
+  background: #fff200;
+}
+.bottom-bar .send-message-button {
+  background: #c8bfe7;
 }
 
-.bottom-bar .send-message-button {
-	background: #c8bfe7;
+.side-bar {
+  grid-area: sidebar;
+  background: #cc3333;
+  padding: 1em;
 }
+
+.content-box {
+  grid-area: content;
+  padding: 1em;
+}
+
+/*# sourceMappingURL=index.css.map */
